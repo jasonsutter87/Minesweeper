@@ -1,11 +1,89 @@
 console.log('ready player 1')
 
-// -- Core Game Logic -- //
+let gameBoard = []
+let gameDifficulty = []
+
+
+
+let init = () => {
+    //ask player how big the board size is.
+    gameDifficulty = setGameDifficulty()
+
+    //generate 2d board
+    generateBoard()
+
+    //generate game board
+    generateGameBoardUI(gameBoard)
+}
+
+let setGameDifficulty = () =>{
+    //trigger modal
+
+    //the value of the form will be the return
+    return ['easy', '9']
+}
+
 
 function generateBoard() {
-  // Create the 2D array representing the board
-  // Populate bombs, numbers, blanks
-  // Return the board array
+    count = 1;
+    
+    // Create the 2D array representing the board
+    for(var x = 0; x < gameDifficulty[1]; x++){
+        let row = [];
+        for(var y = 0; y < gameDifficulty[1]; y++){
+            row.push(
+                {
+                    id: count,
+                    row: x,
+                    col: y,
+                    flagged: false,
+                    isBomb: false,
+                    number: null
+                  }
+             )
+             count++;
+        }
+        gameBoard.push(row);
+    }
+
+    // Populate bombs
+    gameBoard = generateBombs(gameBoard);
+    console.log(gameBoard)
+
+    // Populate numbers
+    gameBoard = generateNumbers(gameBoard);
+
+    return gameBoard;
+}
+
+
+let generateBombs = (board) => {
+    const size = parseInt(gameDifficulty[1]); 
+    const totalTiles = size * size;
+    const totalBombs = Math.floor(totalTiles * 0.15); 
+    const bombIds = new Set();
+
+    // Generate unique random IDs
+    while (bombIds.size < totalBombs) {
+        const rand = Math.floor(Math.random() * totalTiles) + 1; 
+        bombIds.add(rand); 
+    }
+
+    // Set isBomb = true for matching tiles
+    for (let row of board) {
+        for (let tile of row) {
+            if (bombIds.has(tile.id)) {
+                tile.isBomb = true;
+            }
+        }
+    }
+
+    return board;
+};
+
+
+let generateNumbers = (board) => { 
+
 }
 
 function generateGameBoardUI(board) {
@@ -14,7 +92,7 @@ function generateGameBoardUI(board) {
   // Apply CSS Grid container and styles
 }
 
-function getAllNeighbors(tile, board) {
+let getAllNeighbors = (tile, board) => {
   // Return an array of valid neighbor tiles for given tile
 }
 
@@ -46,3 +124,7 @@ function revealAllNumbers(board) {}
 function revealAllBombs(board) {}
 function revealAll(board) {}
 
+
+
+//runner
+init()

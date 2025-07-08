@@ -4,7 +4,6 @@ let gameBoard = []
 let gameDifficulty = []
 
 
-
 let init = () => {
     //ask player how big the board size is.
     gameDifficulty = setGameDifficulty()
@@ -23,8 +22,7 @@ let setGameDifficulty = () =>{
     return ['easy', '9']
 }
 
-
-function generateBoard() {
+let generateBoard = () => {
     count = 1;
     
     // Create the 2D array representing the board
@@ -56,7 +54,6 @@ function generateBoard() {
     return gameBoard;
 }
 
-
 let generateBombs = (board) => {
     const size = parseInt(gameDifficulty[1]); 
     const totalTiles = size * size;
@@ -80,7 +77,6 @@ let generateBombs = (board) => {
 
     return board;
 };
-
 
 let generateNumbers = (board) => {
     const size = parseInt(gameDifficulty[1]);
@@ -126,8 +122,7 @@ let generateNumbers = (board) => {
     return board;
 };
 
-
-function generateGameBoardUI(board) {
+let generateGameBoardUI = (board) => {
     // Iterate board array
     for (let row of board) {
         for (let tile of row) {
@@ -162,11 +157,14 @@ let revealBlankArea = (row, col, visited = new Set()) => {
     const tile = gameBoard[row][col];
 
     const $tileEl = $(`.tile[data-id=${tile.id}]`);
-    $tileEl.prop('disabled', true).addClass('blank-active');
+    $tileEl.addClass('blank-active');
 
     if (tile.number > 0) {
-        $tileEl.html(tile.number).addClass('number-active');
-        return; // stop recursion here
+        $tileEl
+            .html(tile.number)
+            .addClass('number-active')
+            .attr('data-number', tile.number)
+        return; 
     }
 
     // Recursively reveal all 8 neighbors
@@ -178,64 +176,106 @@ let revealBlankArea = (row, col, visited = new Set()) => {
     }
 }
 
-
 let revealClickedCell = (spotNumber) => {
-        let foundTile = null;
-        for (let row of gameBoard) {
-            for (let tile of row) {
-                if (tile.id === spotNumber) {
-                    foundTile = tile;
+    const tile = findCellById(spotNumber);
+    if (!tile || tile.flagged) return; // ignore if flagged or not found
 
-                    if(tile.isBomb){
-                        gameOver(tile.id)
-                        alert('game over')
-                    } else if (tile.number > 0) {
-                        $(`.tile[data-id=${tile.id}]`).html(tile.number)
-                        $(`.tile[data-id=${tile.id}]`).addClass('number-active')
-                    } else {
-                        revealBlankArea(tile.row, tile.col)
-                    }
-                    break;
-                }
-            }
-            if (foundTile) break;
-        }
-}
-
+    if (tile.isBomb) {
+        gameOver(tile.id);
+    } else if (tile.number > 0) {
+        $(`.tile[data-id=${tile.id}]`)
+            .html(tile.number)
+            .addClass('number-active')
+            .attr('data-number', tile.number);
+    } else {
+        revealBlankArea(tile.row, tile.col);
+    }
+};
 
 let gameOver = (spotNumber) => {
+    $(`.tile[data-id=${spotNumber}]`).addClass('detonated-bomb')
+    revealAllBombs(gameBoard)
+}
+
+let toggleFlag = (spotNumber) => {
+    const cell = findCellById(spotNumber);
+    cell.flagged = !cell.flagged;
+
+    const $tile = $(`.tile[data-id=${cell.id}]`);
+    if (cell.flagged) {
+        $tile.html('🚩').addClass('flagged');
+    } else {
+        $tile.html('').removeClass('flagged');
+    }
+};
+
+let findCellById = (spotNumber) => {
+    for (let row of gameBoard) {
+        for (let tile of row) {
+            if (tile.id === spotNumber) return tile;
+        }
+    }
+    return null;
+};
+
+let revealAllBombs = (board) => {
+    let flatten = board.flat();
+
+    flatten.forEach( cell => {
+        if(cell.isBomb){
+            $(`.tile[data-id=${cell.id}]`)
+            .html('💣')
+            .attr('disable', true)
+        } else {
+            $(`.tile[data-id=${cell.id}]`)
+            .attr('disable', true)
+        }
+    } )
+
+    setTimeout(()=>{
+        alert('game over');
+    }, 0 )
 
 }
 
+let resetGame = () =>{
+    gameBoard = []
+    gameDifficulty = []
 
-let checkForBlanks = () => {
-    // recursivly check the neighbors for blank/number: 0
+    init()
 }
 
 
-// -- Event Handlers -- //
+//////////////////////////
+// -- Click Handlers -- //
+//////////////////////////
 
 $('body').on('click', '.tile', e => {
     e.preventDefault();
-    const cellId = parseInt($(e.target).attr('data-id'));
-    revealClickedCell(cellId)
+    if(!$(e.target).attr('disable')){
+        const cellId = parseInt($(e.target).attr('data-id'));
+        revealClickedCell(cellId)
+    }
+});
+
+$('body').on('contextmenu', '.tile', e => {
+    e.preventDefault();
+    if(!$(e.target).attr('disable')){
+        const cellId = parseInt($(e.target).attr('data-id'));
+        toggleFlag(cellId)
+    }
+})
+
+$('.btn-reset-game').on('click', e => {
+    e.preventDefault();
+    $('#game-container').empty();
+    resetGame()
 });
 
 
-function handleFlagTile(tile) {
-  // Toggle flagged state
-}
 
-function resetGame() {
-  // Reset all variables, regenerate board and UI
-}
 
-// -- Debug Helpers -- //
 
-function revealAllBlanks(board) {}
-function revealAllNumbers(board) {}
-function revealAllBombs(board) {}
-function revealAll(board) {}
 
 
 

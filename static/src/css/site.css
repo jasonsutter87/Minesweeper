@@ -11,7 +11,7 @@ body {
   grid-template-rows: repeat(9, 40px);
 }
 
-button.tile {
+.tile {
   width: 40px;
   height: 40px;
   font-size: 16px;
@@ -19,6 +19,33 @@ button.tile {
   border: 1px solid #999;
   cursor: pointer;
 }
-button.tile.flagged {
-  background-color: orange;
+.tile.flagged {
+  background-color: yellow;
+}
+.tile.detonated-bomb {
+  background-color: red;
+}
+.tile[data-number="1"] {
+  color: #0000FF;
+}
+.tile[data-number="2"] {
+  color: #008200;
+}
+.tile[data-number="3"] {
+  color: #FF0000;
+}
+.tile[data-number="4"] {
+  color: #000084;
+}
+.tile[data-number="5"] {
+  color: #840000;
+}
+.tile[data-number="6"] {
+  color: #008284;
+}
+.tile[data-number="7"] {
+  color: #000000;
+}
+.tile[data-number="8"] {
+  color: #808080;
 }/*# sourceMappingURL=site.css.map */

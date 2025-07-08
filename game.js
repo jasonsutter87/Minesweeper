@@ -146,18 +146,81 @@ let getAllNeighbors = (tile, board) => {
   // Return an array of valid neighbor tiles for given tile
 }
 
-function revealBlankArea(tile, board, visited = new Set()) {
-  // Recursive reveal of blank tiles and bordering numbers
+let revealBlankArea = (row, col, visited = new Set()) => {
+    const size = gameBoard.length;
+    const key = `${row}-${col}`;
+
+    // base case
+    if (
+        row < 0 || row >= size ||
+        col < 0 || col >= size ||
+        visited.has(key)
+    ) return;
+
+    visited.add(key);
+
+    const tile = gameBoard[row][col];
+
+    const $tileEl = $(`.tile[data-id=${tile.id}]`);
+    $tileEl.prop('disabled', true).addClass('blank-active');
+
+    if (tile.number > 0) {
+        $tileEl.html(tile.number).addClass('number-active');
+        return; // stop recursion here
+    }
+
+    // Recursively reveal all 8 neighbors
+    for (let dx = -1; dx <= 1; dx++) {
+        for (let dy = -1; dy <= 1; dy++) {
+            if (dx === 0 && dy === 0) continue;
+            revealBlankArea(row + dx, col + dy, visited);
+        }
+    }
 }
+
+
+let revealClickedCell = (spotNumber) => {
+        let foundTile = null;
+        for (let row of gameBoard) {
+            for (let tile of row) {
+                if (tile.id === spotNumber) {
+                    foundTile = tile;
+
+                    if(tile.isBomb){
+                        gameOver(tile.id)
+                        alert('game over')
+                    } else if (tile.number > 0) {
+                        $(`.tile[data-id=${tile.id}]`).html(tile.number)
+                        $(`.tile[data-id=${tile.id}]`).addClass('number-active')
+                    } else {
+                        revealBlankArea(tile.row, tile.col)
+                    }
+                    break;
+                }
+            }
+            if (foundTile) break;
+        }
+}
+
+
+let gameOver = (spotNumber) => {
+
+}
+
+
+let checkForBlanks = () => {
+    // recursivly check the neighbors for blank/number: 0
+}
+
 
 // -- Event Handlers -- //
 
-function handleTileClick(tile, board) {
-  // If flagged, ignore left click
-  // If bomb, trigger game over
-  // If number, reveal number
-  // If blank, run revealBlankArea
-}
+$('body').on('click', '.tile', e => {
+    e.preventDefault();
+    const cellId = parseInt($(e.target).attr('data-id'));
+    revealClickedCell(cellId)
+});
+
 
 function handleFlagTile(tile) {
   // Toggle flagged state

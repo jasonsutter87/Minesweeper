@@ -25,6 +25,10 @@
           background-color: yellow;
         }
 
+        &.blank-active {
+            background-color: #717171;
+        }
+
         &.detonated-bomb {
             background-color: red;
         }

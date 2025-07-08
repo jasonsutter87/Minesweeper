@@ -157,7 +157,7 @@ let revealBlankArea = (row, col, visited = new Set()) => {
     const tile = gameBoard[row][col];
 
     const $tileEl = $(`.tile[data-id=${tile.id}]`);
-    $tileEl.addClass('blank-active');
+
 
     if (tile.number > 0) {
         $tileEl
@@ -165,6 +165,8 @@ let revealBlankArea = (row, col, visited = new Set()) => {
             .addClass('number-active')
             .attr('data-number', tile.number)
         return; 
+    } else {
+        $tileEl.addClass('blank-active');
     }
 
     // Recursively reveal all 8 neighbors

@@ -22,6 +22,9 @@ body {
 .tile.flagged {
   background-color: yellow;
 }
+.tile.blank-active {
+  background-color: #717171;
+}
 .tile.detonated-bomb {
   background-color: red;
 }

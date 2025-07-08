@@ -131,25 +131,6 @@ function generateGameBoardUI(board) {
     // Iterate board array
     for (let row of board) {
         for (let tile of row) {
-        if(tile.isBomb) {
-            $('#game-container').append(`
-                <button class="tile" 
-                        data-id="${tile.id}" 
-                        data-row="${tile.row}" 
-                        data-col="${tile.col}">
-                        💣
-                </button>
-              `);
-        } else if(tile.number > 0 ) {
-            $('#game-container').append(`
-                <button class="tile" 
-                        data-id="${tile.id}" 
-                        data-row="${tile.row}" 
-                        data-col="${tile.col}">
-                        ${tile.number}
-                </button>
-              `);
-        } else {
             $('#game-container').append(`
                 <button class="tile" 
                         data-id="${tile.id}" 
@@ -157,8 +138,6 @@ function generateGameBoardUI(board) {
                         data-col="${tile.col}">
                 </button>
               `);
-        }
-
         }
     }
 }

@@ -1,3 +1,24 @@
 body {
   background-color: green;
+}
+
+#game-container {
+  display: grid;
+  gap: 2px;
+  width: max-content;
+  margin: 20px auto;
+  grid-template-columns: repeat(9, 40px);
+  grid-template-rows: repeat(9, 40px);
+}
+
+button.tile {
+  width: 40px;
+  height: 40px;
+  font-size: 16px;
+  background-color: #ccc;
+  border: 1px solid #999;
+  cursor: pointer;
+}
+button.tile.flagged {
+  background-color: orange;
 }/*# sourceMappingURL=site.css.map */

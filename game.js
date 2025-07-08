@@ -82,14 +82,85 @@ let generateBombs = (board) => {
 };
 
 
-let generateNumbers = (board) => { 
+let generateNumbers = (board) => {
+    const size = parseInt(gameDifficulty[1]);
 
-}
+    for (let row = 0; row < size; row++) {
+        for (let col = 0; col < size; col++) {
+            const tile = board[row][col];
+
+            // Skip if this tile is a bomb
+            if (tile.isBomb) continue;
+
+            let bombCount = 0;
+
+            // Check all 8 neighbors
+            for (let dx = -1; dx <= 1; dx++) {
+                for (let dy = -1; dy <= 1; dy++) {
+                    if (dx === 0 && dy === 0) continue; // Skip self
+
+                    const newRow = row + dx;
+                    const newCol = col + dy;
+
+                    // Check bounds
+                    if (
+                        newRow >= 0 && newRow < size &&
+                        newCol >= 0 && newCol < size
+                    ) {
+                        const neighbor = board[newRow][newCol];
+                        if (neighbor.isBomb) {
+                            bombCount++;
+                        }
+                    }
+                }
+            }
+
+            // If any bombs found, assign the number
+            if (bombCount > 0) {
+                tile.number = bombCount;
+                tile.isNumber = true;
+            }
+        }
+    }
+
+    return board;
+};
+
 
 function generateGameBoardUI(board) {
-  // Iterate board array
-  // Create HTML buttons/divs with tile-id attributes for linking UI & data
-  // Apply CSS Grid container and styles
+    // Iterate board array
+    for (let row of board) {
+        for (let tile of row) {
+        if(tile.isBomb) {
+            $('#game-container').append(`
+                <button class="tile" 
+                        data-id="${tile.id}" 
+                        data-row="${tile.row}" 
+                        data-col="${tile.col}">
+                        💣
+                </button>
+              `);
+        } else if(tile.number > 0 ) {
+            $('#game-container').append(`
+                <button class="tile" 
+                        data-id="${tile.id}" 
+                        data-row="${tile.row}" 
+                        data-col="${tile.col}">
+                        ${tile.number}
+                </button>
+              `);
+        } else {
+            $('#game-container').append(`
+                <button class="tile" 
+                        data-id="${tile.id}" 
+                        data-row="${tile.row}" 
+                        data-col="${tile.col}">
+                </button>
+              `);
+        }
+
+        }
+    }
 }
 
 let getAllNeighbors = (tile, board) => {
